@@ -86,7 +86,7 @@ Factorize as many numbers as possible into a product of two smaller numbers.
 
 ## Author
 
-[Karima Touhami](https://github.com/KarimaTouhami)
+[Karima Touhami](https://www.linkedin.com/in/karima-touhami-5b14b4268/)
 
 ## Resources
 
