@@ -1,33 +1,52 @@
 #!/usr/bin/python3
+""" Factor RSA numbers into two primes """
 
 
-from fractions import gcd
+from math import gcd, isqrt
 from sys import argv
 
 
+def smallest_factor(n):
+    """ smallest divisor of n, or n when n is prime """
+    if n % 2 == 0:
+        return 2
+    for i in range(3, isqrt(n) + 1, 2):
+        if n % i == 0:
+            return i
+    return n
+
+
 def pollards_rho(n):
-    x = 2
-    y = 2
-    d = 1
-    f = lambda x: (x**2 + 1) % n
-    while d == 1:
-        x = f(x)
-        y = f(f(y))
-        d = gcd(abs(x - y), n)
-    if d != n:
-        return d
+    """ return a non-trivial factor of n, or None when rho fails """
+    c = 1
+    while c <= 50:
+        x = 2
+        y = 2
+        d = 1
+        while d == 1:
+            x = (x * x + c) % n
+            y = (y * y + c) % n
+            y = (y * y + c) % n
+            d = gcd(abs(x - y), n)
+        if d != n:
+            return d
+        c += 1
+    return None
+
+
+def factor(n):
+    """ the two factors of n, largest first """
+    p = pollards_rho(n) or smallest_factor(n)
+    q = n // p
+    return (p, q) if p >= q else (q, p)
 
 
 def read_file():
     with open(argv[1]) as f:
         for number in f:
-            num = int(number)
-            if num % 2 == 0:
-                print("{:d}={}*{}".format(num, num // 2, 2))
-            else:
-                p = pollards_rho(num)
-                f1 = p
-                f2 = int(num / p)
+            if number.strip():
+                num = int(number)
+                f1, f2 = factor(num)
                 print("{}={}*{}".format(num, f1, f2))
 
 
